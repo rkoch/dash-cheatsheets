@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <title>vim-sexp</title>
+    <link href='style.css' rel='stylesheet'>
+    <link href='//dash_ref/Category/Definitions/1'>
+    <link href='//dash_ref_Definitions/Entry/COMPOUND FORM/0'>
+    <link href='//dash_ref_Definitions/Entry/STRING/0'>
+    <link href='//dash_ref_Definitions/Entry/COMMENT/0'>
+    <link href='//dash_ref_Definitions/Entry/MACRO CHARACTERS/0'>
+    <link href='//dash_ref_Definitions/Entry/ELEMENT/0'>
+    <link href='//dash_ref/Category/Text Object Selections (visual, operator-pending)/1'>
+    <link href='//dash_ref_Text Object Selections (visual, operator-pending)/Entry/Select COMPOUND FORMS/0'>
+    <link href='//dash_ref_Text Object Selections (visual, operator-pending)/Entry/Select top-level COMPOUND FORMS/0'>
+    <link href='//dash_ref_Text Object Selections (visual, operator-pending)/Entry/Select STRINGS/0'>
+    <link href='//dash_ref_Text Object Selections (visual, operator-pending)/Entry/Select ELEMENTS/0'>
+    <link href='//dash_ref/Category/Text Object Motions (normal, visual, operator-pending)/1'>
+    <link href='//dash_ref_Text Object Motions (normal, visual, operator-pending)/Entry/Move the cursor to the nearest paired structural bracket/0'>
+    <link href='//dash_ref_Text Object Motions (normal, visual, operator-pending)/Entry/Move the cursor ELEMENT-wise, ending on an element head/0'>
+    <link href='//dash_ref_Text Object Motions (normal, visual, operator-pending)/Entry/Move the cursor ELEMENT-wise, ending on an element tail/0'>
+    <link href='//dash_ref_Text Object Motions (normal, visual, operator-pending)/Entry/Move the cursor to an adjacent top-level ELEMENT/0'>
+    <link href='//dash_ref_Text Object Motions (normal, visual, operator-pending)/Entry/Select an adjacent ELEMENT/0'>
+    <link href='//dash_ref/Category/Indent Commands (normal)/1'>
+    <link href='//dash_ref_Indent Commands (normal)/Entry/Indents the current COMPOUND FORM without moving the cursor/0'>
+    <link href='//dash_ref_Indent Commands (normal)/Entry/Indents the current top-level COMPOUND FORM without moving the cursor/0'>
+    <link href='//dash_ref/Category/Wrap Commands (normal, visual)/1'>
+    <link href='//dash_ref_Wrap Commands (normal, visual)/Entry/Wrap the current COMPOUND FORM with ( and )/0'>
+    <link href='//dash_ref_Wrap Commands (normal, visual)/Entry/Wrap the current COMPOUND FORM with [ and ]/0'>
+    <link href='//dash_ref_Wrap Commands (normal, visual)/Entry/Wrap the current COMPOUND FORM with { and }/0'>
+    <link href='//dash_ref_Wrap Commands (normal, visual)/Entry/Wrap the current ELEMENT with ( and )/0'>
+    <link href='//dash_ref_Wrap Commands (normal, visual)/Entry/Wrap the current ELEMENT with [ and ]/0'>
+    <link href='//dash_ref_Wrap Commands (normal, visual)/Entry/Wrap the current ELEMENT with { and }/0'>
+    <link href='//dash_ref/Category/List Manipulation (normal, visual)/1'>
+    <link href='//dash_ref_List Manipulation (normal, visual)/Entry/Splice the current COMPOUND FORM into its parent/0'>
+    <link href='//dash_ref_List Manipulation (normal, visual)/Entry/Raise the current COMPOUND FORM to replace the enclosing COMPOUND FORM/0'>
+    <link href='//dash_ref_List Manipulation (normal, visual)/Entry/Raise the current ELEMENT to replace the enclosing COMPOUND FORM/0'>
+    <link href='//dash_ref_List Manipulation (normal, visual)/Entry/Swap the position of the current COMPOUND FORM with a sibling ELEMENT/0'>
+    <link href='//dash_ref_List Manipulation (normal, visual)/Entry/Swap the position of the current ELEMENT with a sibling ELEMENT/0'>
+    <link href='//dash_ref_List Manipulation (normal, visual)/Entry/Emit the terminal ELEMENTS of the current COMPOUND FORM/0'>
+    <link href='//dash_ref_List Manipulation (normal, visual)/Entry/Capture adjacent ELEMENTS into the current COMPOUND FORM (slurpage)/0'>
+    <link href='//dash_ref/Category/Cursor Insertion (normal)/1'>
+    <link href='//dash_ref_Cursor Insertion (normal)/Entry/Insert the cursor at the head of the current COMPOUND FORM/0'>
+    <link href='//dash_ref_Cursor Insertion (normal)/Entry/Insert the curser at the tail of the current COMPOUND FORM/0'>
+  </head>
+  <body>
+    <header>
+      <h1>vim-sexp</h1>
+    </header>
+    <article>
+      <p></p>
+      <section class='category'>
+        <h2 id='//dash_ref/Category/Definitions/1'>
+          Definitions
+        </h2>
+        <div class='scrollable'>
+          <table>
+            <tr id='//dash_ref_Definitions/Entry/COMPOUND FORM/0'>
+              <td class='description' colspan='2'>
+                <div class='name'><p>COMPOUND FORM</p></div>
+                <div class='notes'><p>A COMPOUND FORM is a region of text delimited by a pair of <code>(</code> and <code>)</code>, <code>[</code> and <code>]</code>, or <code>{</code> and <code>}</code>.</p></div>
+              </td>
+            </tr>
+            <tr id='//dash_ref_Definitions/Entry/STRING/0'>
+              <td class='description' colspan='2'>
+                <div class='name'><p>STRING</p></div>
+                <div class='notes'><p>A STRING is a contiguous region of text whose syntax name matches the Vim pattern <code>\vstring|regex|pattern</code>.</p></div>
+              </td>
+            </tr>
+            <tr id='//dash_ref_Definitions/Entry/COMMENT/0'>
+              <td class='description' colspan='2'>
+                <div class='name'><p>COMMENT</p></div>
+                <div class='notes'><p>A COMMENT is a region of text whose syntax name matches the Vim pattern <code>comment</code>. Line comments that are indented but on successive lines are considered to be a single comment.</p></div>
+              </td>
+            </tr>
+            <tr id='//dash_ref_Definitions/Entry/MACRO CHARACTERS/0'>
+              <td class='description' colspan='2'>
+                <div class='name'><p>MACRO CHARACTERS</p></div>
+                <div class='notes'><p>MACRO CHARACTERS are the special set of leading characters expanded by a Lisp reader at read-time. These differ by language, and default to Scheme&#39;s macro character set in an unknown FileType.</p></div>
+              </td>
+            </tr>
+            <tr id='//dash_ref_Definitions/Entry/ELEMENT/0'>
+              <td class='description' colspan='2'>
+                <div class='name'><p>ELEMENT</p></div>
+                <div class='notes'>
+                  <p>An ELEMENT is the</p>
+                  
+                  <ul>
+                  <li>current STRING if the cursor is in a STRING</li>
+                  <li>current COMMENT if the cursor is in a COMMENT</li>
+                  <li>current COMPOUND FORM if the cursor is on a paired structural bracket</li>
+                  <li>current sequence of MACRO CHARACTERS and the following ELEMENT if the cursor is on a MACRO CHARACTER</li>
+                  <li>current contiguous sequence of non-whitespace, non-bracket characters otherwise</li>
+                  </ul>
+                  
+                  <p>An ELEMENT always includes any leading MACRO CHARACTERS.</p>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </section>
+      <section class='category'>
+        <h2 id='//dash_ref/Category/Text Object Selections (visual, operator-pending)/1'>
+          Text Object Selections (visual, operator-pending)
+        </h2>
+        <div class='scrollable'>
+          <table>
+            <tr>
+              <td class='description' colspan='2'>
+                <div class='name'></div>
+                <div class='notes'><p>Text object selections refer to text around the cursor.</p></div>
+              </td>
+            </tr>
+            <tr id='//dash_ref_Text Object Selections (visual, operator-pending)/Entry/Select COMPOUND FORMS/0'>
+              <td class='command'>
+                <p>
+                  <code>af</code>
+                </p>
+                <p>
+                  <code>if</code>
+                </p>
+              </td>
+              <td class='description'>
+                <div class='name'><p>Select COMPOUND FORMS</p></div>
+                <div class='notes'></div>
+              </td>
+            </tr>
+            <tr id='//dash_ref_Text Object Selections (visual, operator-pending)/Entry/Select top-level COMPOUND FORMS/0'>
+              <td class='command'>
+                <p>
+                  <code>aF</code>
+                </p>
+                <p>
+                  <code>iF</code>
+                </p>
+              </td>
+              <td class='description'>
+                <div class='name'><p>Select <em>top-level</em> COMPOUND FORMS</p></div>
+                <div class='notes'></div>
+              </td>
+            </tr>
+            <tr id='//dash_ref_Text Object Selections (visual, operator-pending)/Entry/Select STRINGS/0'>
+              <td class='command'>
+                <p>
+                  <code>as</code>
+                </p>
+                <p>
+                  <code>is</code>
+                </p>
+              </td>
+              <td class='description'>
+                <div class='name'><p>Select STRINGS</p></div>
+                <div class='notes'></div>
+              </td>
+            </tr>
+            <tr id='//dash_ref_Text Object Selections (visual, operator-pending)/Entry/Select ELEMENTS/0'>
+              <td class='command'>
+                <p>
+                  <code>ae</code>
+                </p>
+                <p>
+                  <code>ie</code>
+                </p>
+              </td>
+              <td class='description'>
+                <div class='name'><p>Select ELEMENTS</p></div>
+                <div class='notes'></div>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </section>
+      <section class='category'>
+        <h2 id='//dash_ref/Category/Text Object Motions (normal, visual, operator-pending)/1'>
+          Text Object Motions (normal, visual, operator-pending)
+        </h2>
+        <div class='scrollable'>
+          <table>
+            <tr>
+              <td class='description' colspan='2'>
+                <div class='name'></div>
+                <div class='notes'><p>Text object motions move the cursor in normal mode, extend selections in visual mode, and refer to text defined by the movement of the cursor in operator-pending mode.</p></div>
+              </td>
+            </tr>
+            <tr id='//dash_ref_Text Object Motions (normal, visual, operator-pending)/Entry/Move the cursor to the nearest paired structural bracket/0'>
+              <td class='command'>
+                <p>
+                  <code>(</code>
+                </p>
+                <p>
+                  <code>)</code>
+                </p>
+              </td>
+              <td class='description'>
+                <div class='name'><p>Move the cursor to the nearest paired structural bracket</p></div>
+                <div class='notes'></div>
+              </td>
+            </tr>
+            <tr id='//dash_ref_Text Object Motions (normal, visual, operator-pending)/Entry/Move the cursor ELEMENT-wise, ending on an element head/0'>
+              <td class='command'>
+                <p>
+                  <code>&lt;M-b&gt;</code>
+                </p>
+                <p>
+                  <code>&lt;M-w&gt;</code>
+                </p>
+              </td>
+              <td class='description'>
+                <div class='name'><p>Move the cursor ELEMENT-wise, ending on an element head</p></div>
+                <div class='notes'><p>Analogous to builtin <code>b</code> and <code>w</code> motions.</p></div>
+              </td>
+            </tr>
+            <tr id='//dash_ref_Text Object Motions (normal, visual, operator-pending)/Entry/Move the cursor ELEMENT-wise, ending on an element tail/0'>
+              <td class='command'>
+                <p>
+                  <code>g&lt;M-e&gt;</code>
+                </p>
+                <p>
+                  <code>&lt;M-e&gt;</code>
+                </p>
+              </td>
+              <td class='description'>
+                <div class='name'><p>Move the cursor ELEMENT-wise, ending on an element tail</p></div>
+                <div class='notes'><p>Analogous to builtin <code>ge</code> and <code>e</code> motions.</p></div>
+              </td>
+            </tr>
+            <tr id='//dash_ref_Text Object Motions (normal, visual, operator-pending)/Entry/Move the cursor to an adjacent top-level ELEMENT/0'>
+              <td class='command'>
+                <p>
+                  <code>[[</code>
+                </p>
+                <p>
+                  <code>]]</code>
+                </p>
+              </td>
+              <td class='description'>
+                <div class='name'><p>Move the cursor to an adjacent <em>top-level</em> ELEMENT</p></div>
+                <div class='notes'></div>
+              </td>
+            </tr>
+            <tr id='//dash_ref_Text Object Motions (normal, visual, operator-pending)/Entry/Select an adjacent ELEMENT/0'>
+              <td class='command'>
+                <p>
+                  <code>[e</code>
+                </p>
+                <p>
+                  <code>]e</code>
+                </p>
+              </td>
+              <td class='description'>
+                <div class='name'><p>Select an adjacent ELEMENT</p></div>
+                <div class='notes'></div>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </section>
+      <section class='category'>
+        <h2 id='//dash_ref/Category/Indent Commands (normal)/1'>
+          Indent Commands (normal)
+        </h2>
+        <div class='scrollable'>
+          <table>
+            <tr id='//dash_ref_Indent Commands (normal)/Entry/Indents the current COMPOUND FORM without moving the cursor/0'>
+              <td class='command'>
+                <p>
+                  <code>==</code>
+                </p>
+              </td>
+              <td class='description'>
+                <div class='name'><p>Indents the current COMPOUND FORM without moving the cursor</p></div>
+                <div class='notes'></div>
+              </td>
+            </tr>
+            <tr id='//dash_ref_Indent Commands (normal)/Entry/Indents the current top-level COMPOUND FORM without moving the cursor/0'>
+              <td class='command'>
+                <p>
+                  <code>=-</code>
+                </p>
+              </td>
+              <td class='description'>
+                <div class='name'><p>Indents the current <em>top-level</em> COMPOUND FORM without moving the cursor</p></div>
+                <div class='notes'></div>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </section>
+      <section class='category'>
+        <h2 id='//dash_ref/Category/Wrap Commands (normal, visual)/1'>
+          Wrap Commands (normal, visual)
+        </h2>
+        <div class='scrollable'>
+          <table>
+            <tr>
+              <td class='description' colspan='2'>
+                <div class='name'></div>
+                <div class='notes'>
+                  <p>Wrap commands wrap the current COMPOUND FORM, ELEMENT, or visual selection and place the cursor at the head or tail of the newly created COMPOUND FORM.
+                  If <code>g:sexp_insert_after_wrap</code> is set (true by default), insert mode is entered after wrapping.</p>
+                </div>
+              </td>
+            </tr>
+            <tr id='//dash_ref_Wrap Commands (normal, visual)/Entry/Wrap the current COMPOUND FORM with ( and )/0'>
+              <td class='command'>
+                <p>
+                  <code>&lt;LocalLeader&gt;i</code>
+                </p>
+                <p>
+                  <code>&lt;LocalLeader&gt;I</code>
+                </p>
+                <p>
+                  <code>ysaf)</code>
+                </p>
+              </td>
+              <td class='description'>
+                <div class='name'><p>Wrap the current COMPOUND FORM with <code>(</code> and <code>)</code></p></div>
+                <div class='notes'></div>
+              </td>
+            </tr>
+            <tr id='//dash_ref_Wrap Commands (normal, visual)/Entry/Wrap the current COMPOUND FORM with [ and ]/0'>
+              <td class='command'>
+                <p>
+                  <code>&lt;LocalLeader&gt;[</code>
+                </p>
+                <p>
+                  <code>&lt;LocalLeader&gt;]</code>
+                </p>
+                <p>
+                  <code>ysaf]</code>
+                </p>
+              </td>
+              <td class='description'>
+                <div class='name'><p>Wrap the current COMPOUND FORM with <code>[</code> and <code>]</code></p></div>
+                <div class='notes'></div>
+              </td>
+            </tr>
+            <tr id='//dash_ref_Wrap Commands (normal, visual)/Entry/Wrap the current COMPOUND FORM with { and }/0'>
+              <td class='command'>
+                <p>
+                  <code>&lt;LocalLeader&gt;{</code>
+                </p>
+                <p>
+                  <code>&lt;LocalLeader&gt;}</code>
+                </p>
+                <p>
+                  <code>ysaf}</code>
+                </p>
+              </td>
+              <td class='description'>
+                <div class='name'><p>Wrap the current COMPOUND FORM with <code>{</code> and <code>}</code></p></div>
+                <div class='notes'></div>
+              </td>
+            </tr>
+            <tr id='//dash_ref_Wrap Commands (normal, visual)/Entry/Wrap the current ELEMENT with ( and )/0'>
+              <td class='command'>
+                <p>
+                  <code>&lt;LocalLeader&gt;W</code>
+                </p>
+                <p>
+                  <code>&lt;LocalLeader&gt;w</code>
+                </p>
+                <p>
+                  <code>cse(</code>
+                </p>
+                <p>
+                  <code>cse)</code>
+                </p>
+                <p>
+                  <code>cseb</code>
+                </p>
+              </td>
+              <td class='description'>
+                <div class='name'><p>Wrap the current ELEMENT with <code>(</code> and <code>)</code></p></div>
+                <div class='notes'></div>
+              </td>
+            </tr>
+            <tr id='//dash_ref_Wrap Commands (normal, visual)/Entry/Wrap the current ELEMENT with [ and ]/0'>
+              <td class='command'>
+                <p>
+                  <code>&lt;LocalLeader&gt;e[</code>
+                </p>
+                <p>
+                  <code>&lt;LocalLeader&gt;e]</code>
+                </p>
+                <p>
+                  <code>cse[</code>
+                </p>
+                <p>
+                  <code>cse]</code>
+                </p>
+              </td>
+              <td class='description'>
+                <div class='name'><p>Wrap the current ELEMENT with <code>[</code> and <code>]</code></p></div>
+                <div class='notes'></div>
+              </td>
+            </tr>
+            <tr id='//dash_ref_Wrap Commands (normal, visual)/Entry/Wrap the current ELEMENT with { and }/0'>
+              <td class='command'>
+                <p>
+                  <code>&lt;LocalLeader&gt;e{</code>
+                </p>
+                <p>
+                  <code>&lt;LocalLeader&gt;e}</code>
+                </p>
+                <p>
+                  <code>cse{</code>
+                </p>
+                <p>
+                  <code>cse}</code>
+                </p>
+              </td>
+              <td class='description'>
+                <div class='name'><p>Wrap the current ELEMENT with <code>{</code> and <code>}</code></p></div>
+                <div class='notes'></div>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </section>
+      <section class='category'>
+        <h2 id='//dash_ref/Category/List Manipulation (normal, visual)/1'>
+          List Manipulation (normal, visual)
+        </h2>
+        <div class='scrollable'>
+          <table>
+            <tr>
+              <td class='description' colspan='2'>
+                <div class='name'></div>
+                <div class='notes'><p>List manipulation commands change the structure of COMPOUND FORMS. If these commands are called from visual mode, the selection is used in place of the current COMPOUND FORM or ELEMENT.</p></div>
+              </td>
+            </tr>
+            <tr id='//dash_ref_List Manipulation (normal, visual)/Entry/Splice the current COMPOUND FORM into its parent/0'>
+              <td class='command'>
+                <p>
+                  <code>&lt;LocalLeader&gt;@</code>
+                </p>
+                <p>
+                  <code>dsf</code>
+                </p>
+              </td>
+              <td class='description'>
+                <div class='name'><p>Splice the current COMPOUND FORM into its parent</p></div>
+                <div class='notes'></div>
+              </td>
+            </tr>
+            <tr id='//dash_ref_List Manipulation (normal, visual)/Entry/Raise the current COMPOUND FORM to replace the enclosing COMPOUND FORM/0'>
+              <td class='command'>
+                <p>
+                  <code>&lt;LocalLeader&gt;o</code>
+                </p>
+              </td>
+              <td class='description'>
+                <div class='name'><p>Raise the current COMPOUND FORM to replace the enclosing COMPOUND FORM</p></div>
+                <div class='notes'></div>
+              </td>
+            </tr>
+            <tr id='//dash_ref_List Manipulation (normal, visual)/Entry/Raise the current ELEMENT to replace the enclosing COMPOUND FORM/0'>
+              <td class='command'>
+                <p>
+                  <code>&lt;LocalLeader&gt;O</code>
+                </p>
+              </td>
+              <td class='description'>
+                <div class='name'><p>Raise the current ELEMENT to replace the enclosing COMPOUND FORM</p></div>
+                <div class='notes'></div>
+              </td>
+            </tr>
+            <tr id='//dash_ref_List Manipulation (normal, visual)/Entry/Swap the position of the current COMPOUND FORM with a sibling ELEMENT/0'>
+              <td class='command'>
+                <p>
+                  <code>&lt;M-k&gt;</code>
+                </p>
+                <p>
+                  <code>&lt;M-j&gt;</code>
+                </p>
+              </td>
+              <td class='description'>
+                <div class='name'><p>Swap the position of the current COMPOUND FORM with a sibling ELEMENT</p></div>
+                <div class='notes'></div>
+              </td>
+            </tr>
+            <tr id='//dash_ref_List Manipulation (normal, visual)/Entry/Swap the position of the current ELEMENT with a sibling ELEMENT/0'>
+              <td class='command'>
+                <p>
+                  <code>&lt;M-h&gt;</code>
+                </p>
+                <p>
+                  <code>&lt;M-l&gt;</code>
+                </p>
+              </td>
+              <td class='description'>
+                <div class='name'><p>Swap the position of the current ELEMENT with a sibling ELEMENT</p></div>
+                <div class='notes'></div>
+              </td>
+            </tr>
+            <tr id='//dash_ref_List Manipulation (normal, visual)/Entry/Emit the terminal ELEMENTS of the current COMPOUND FORM/0'>
+              <td class='command'>
+                <p>
+                  <code>&lt;M-S-j&gt;</code>
+                </p>
+                <p>
+                  <code>&lt;M-S-k&gt;</code>
+                </p>
+                <p>
+                  <code>&gt;(</code>
+                </p>
+                <p>
+                  <code>&lt;)</code>
+                </p>
+              </td>
+              <td class='description'>
+                <div class='name'><p>Emit the terminal ELEMENTS of the current COMPOUND FORM</p></div>
+                <div class='notes'><p>Also known as <code>barfage</code>.</p></div>
+              </td>
+            </tr>
+            <tr id='//dash_ref_List Manipulation (normal, visual)/Entry/Capture adjacent ELEMENTS into the current COMPOUND FORM (slurpage)/0'>
+              <td class='command'>
+                <p>
+                  <code>&lt;M-S-h&gt;</code>
+                </p>
+                <p>
+                  <code>&lt;M-S-l&gt;</code>
+                </p>
+                <p>
+                  <code>&lt;(</code>
+                </p>
+                <p>
+                  <code>&gt;)</code>
+                </p>
+              </td>
+              <td class='description'>
+                <div class='name'><p>Capture adjacent ELEMENTS into the current COMPOUND FORM (slurpage)</p></div>
+                <div class='notes'><p>Also knwon as <code>slurpage</code>.</p></div>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </section>
+      <section class='category'>
+        <h2 id='//dash_ref/Category/Cursor Insertion (normal)/1'>
+          Cursor Insertion (normal)
+        </h2>
+        <div class='scrollable'>
+          <table>
+            <tr id='//dash_ref_Cursor Insertion (normal)/Entry/Insert the cursor at the head of the current COMPOUND FORM/0'>
+              <td class='command'>
+                <p>
+                  <code>&lt;LocalLeader&gt;h</code>
+                </p>
+                <p>
+                  <code>&lt;I</code>
+                </p>
+              </td>
+              <td class='description'>
+                <div class='name'><p>Insert the cursor at the head of the current COMPOUND FORM</p></div>
+                <div class='notes'></div>
+              </td>
+            </tr>
+            <tr id='//dash_ref_Cursor Insertion (normal)/Entry/Insert the curser at the tail of the current COMPOUND FORM/0'>
+              <td class='command'>
+                <p>
+                  <code>&lt;LocalLeader&gt;l</code>
+                </p>
+                <p>
+                  <code>&gt;I</code>
+                </p>
+              </td>
+              <td class='description'>
+                <div class='name'><p>Insert the curser at the tail of the current COMPOUND FORM</p></div>
+                <div class='notes'></div>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </section>
+      <section class='notes'>
+        <h2>Notes</h2>
+        <ul>
+        <li>Based on the docs of the vim plugin from <a href="https://github.com/guns/vim-sexp">vim-sexp</a>.</li>
+        <li>Some bindings require tpope&#39;s plugin <a href="https://github.com/tpope/vim-sexp-mappings-for-regular-people">vim-sexp-mappings-for-regular-people</a>
+        and <a href="https://github.com/tpope/vim-surround">surround.vim</a>.</li>
+        <li>Converted by <a href="https://github.com/rkoch">Remo Koch</a>.</li>
+        </ul>
+      </section>
+    </article>
+    <footer>
+      You can modify and improve this cheat sheet <a onclick="window.dash.openExternal_(this.href); return false;" href="http://cheat.kapeli.com">here</a>
+    </footer>
+  </body>
+</html>

@@ -14,6 +14,10 @@ My personal cheatsheets for the [Dash App](https://kapeli.com/dash).
 * Pull all changes into your local working copy
 * In Dash: `Settings` > `Docsets` > `Rescan`
 
+## Available cheatsheets so far
+
+* `vim-sexp`
+
 ## Build
 
 * Install `cheatseet` as per [documentation](https://github.com/Kapeli/cheatset#readme)
