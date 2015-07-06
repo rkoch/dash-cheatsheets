@@ -2,7 +2,7 @@ cheatsheet do
     title 'vim-sexp'
     docset_file_name 'vim-sexp'
     keyword 'sexp'
-    source_url 'http://cheat.kapeli.com'
+    source_url 'https://github.com/rkoch/dash-cheatsheets'
 
     category do
       id 'Definitions'
