@@ -29,6 +29,10 @@ My personal cheatsheets for the [Dash App](https://kapeli.com/dash).
   > # commit and push
   ```
 
+## TODO
+
+* Set up automated travis build
+
 ## License
 
 MIT.
