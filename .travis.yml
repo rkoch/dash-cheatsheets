@@ -9,8 +9,9 @@ script:
   - cd build
   - find ../cheatsheets -name "*.rb" -exec cheatset generate {} \;
 after_success:
+  - cd ${TRAVIS_BUILD_DIR}
   - git config credential.helper "store --file=.git/credentials"
   - echo "https://${GH_TOKEN}:@github.com" > .git/credentials
   - git add build/
-  - git commit --author="Travis CI <travis@travis-ci.org>" -m 'Building Cheatsheets from commit ${TRAVIS_COMMIT}'
+  - git commit --author="Travis CI <travis@travis-ci.org>" -m 'Build Cheatsheets (build.${TRAVIS_BUILD_NUMBER}.${TRAVIS_COMMIT})'
   - git push origin ${TRAVIS_BRANCH}
