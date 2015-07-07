@@ -264,7 +264,6 @@ cheatsheet do
     * Based on the docs of the vim plugin from [vim-sexp](https://github.com/guns/vim-sexp).
     * Some bindings require tpope's plugin [vim-sexp-mappings-for-regular-people](https://github.com/tpope/vim-sexp-mappings-for-regular-people)
       and [surround.vim](https://github.com/tpope/vim-surround).
-    * This is automatically built now.
     * Converted by [Remo Koch](https://github.com/rkoch).
     END
 end
