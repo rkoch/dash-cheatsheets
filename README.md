@@ -2,6 +2,8 @@
 
 My personal cheatsheets for the [Dash App](https://kapeli.com/dash).
 
+[![Build Status](https://travis-ci.org/rkoch/dash-cheatsheets.svg)](https://travis-ci.org/rkoch/dash-cheatsheets)
+
 ## Installation
 
 * Clone this repo to your local disk
