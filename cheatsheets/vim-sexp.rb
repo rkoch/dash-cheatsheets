@@ -264,6 +264,7 @@ cheatsheet do
     * Based on the docs of the vim plugin from [vim-sexp](https://github.com/guns/vim-sexp).
     * Some bindings require tpope's plugin [vim-sexp-mappings-for-regular-people](https://github.com/tpope/vim-sexp-mappings-for-regular-people)
       and [surround.vim](https://github.com/tpope/vim-surround).
+    * For all bindings to work properly on OS X, all vim-sexp mappings containing the `Alt` key need to be overridden. See my dotfiles for more info.
     * Converted by [Remo Koch](https://github.com/rkoch).
     END
 end
